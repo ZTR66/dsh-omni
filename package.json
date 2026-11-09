@@ -1,5 +1,5 @@
 {
-  "name": "dsh-omni",
+  "name": "@ztr66/dsh-omni",
   "version": "0.1.0",
   "description": "One plugin for every modality: probe, transcribe, analyse and compose image, video and audio.",
   "type": "module",
@@ -12,7 +12,8 @@
       "patch": "./cordis.patch.yml"
     },
     "client": {
-      "platform": "web"
+      "platform": "web",
+      "immediately": true
     }
   },
   "files": [
@@ -52,5 +53,9 @@
   "bugs": {
     "url": "https://github.com/ZTR66/dsh-omni/issues"
   },
-  "homepage": "https://github.com/ZTR66/dsh-omni#readme"
+  "homepage": "https://github.com/ZTR66/dsh-omni#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }

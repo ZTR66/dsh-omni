@@ -48,7 +48,7 @@ import {
   generateVideo, formatVideo,
 } from './lib/video-generate.js';
 
-export const name = 'dsh-omni';
+export const name = '@ztr66/dsh-omni';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 

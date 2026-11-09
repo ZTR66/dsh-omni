@@ -16,7 +16,10 @@
  * body this page sends.
  */
 window.__ModuleLoader__.load({
-  id: 'dsh-omni',
+  // Must equal the package name: the loader keys its module table by this id
+  // and the host wires `dsh.client` to the same package, so a mismatch leaves
+  // the entry registered but never loaded.
+  id: '@ztr66/dsh-omni',
   factory(require) {
     const React = require('react');
     const h = React.createElement;
