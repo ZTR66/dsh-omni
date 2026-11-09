@@ -12,10 +12,7 @@
       "patch": "./cordis.patch.yml"
     },
     "client": {
-      "platform": "web",
-      "inject": [
-        "@deepseek-ai/dsh-client-locale"
-      ]
+      "platform": "web"
     }
   },
   "files": [
@@ -24,7 +21,6 @@
     "lib",
     "scripts",
     "skills",
-    "locale",
     "cordis.patch.yml",
     "icon.svg",
     "README.md",
@@ -48,5 +44,13 @@
     ".": "./index.js",
     "./client": "./client.js",
     "./package.json": "./package.json"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZTR66/dsh-omni.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ZTR66/dsh-omni/issues"
+  },
+  "homepage": "https://github.com/ZTR66/dsh-omni#readme"
 }

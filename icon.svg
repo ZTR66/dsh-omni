@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="All media">
+  <title>All media</title>
+  <!-- A film frame with a waveform inside: the two things this plugin handles,
+       and the frame reads as "media" at 16 px where detail would be lost. -->
+  <rect x="4" y="10" width="56" height="44" rx="6" fill="#101014"/>
+  <rect x="4" y="10" width="56" height="44" rx="6" fill="none" stroke="#F5F5F7" stroke-opacity="0.18"/>
+  <!-- sprocket holes -->
+  <g fill="#F5F5F7" fill-opacity="0.35">
+    <rect x="9" y="15" width="4" height="4" rx="1"/>
+    <rect x="9" y="45" width="4" height="4" rx="1"/>
+    <rect x="51" y="15" width="4" height="4" rx="1"/>
+    <rect x="51" y="45" width="4" height="4" rx="1"/>
+  </g>
+  <!-- waveform -->
+  <g stroke="#D4A24C" stroke-width="3" stroke-linecap="round">
+    <path d="M17 32 L17 32"/>
+    <path d="M23 26 L23 38"/>
+    <path d="M29 21 L29 43"/>
+    <path d="M35 27 L35 37"/>
+    <path d="M41 23 L41 41"/>
+    <path d="M47 29 L47 35"/>
+  </g>
+</svg>
