@@ -1,0 +1,25 @@
+# Local test output — screenshots, grids, generated media.
+.test/
+omni-images/
+omni-video/
+omni-frames/
+omni-audio/
+omni-speech/
+
+# npm and dependency output.
+*.tgz
+node_modules/
+
+# Generated on first use by the speech helper.
+scripts/speak.py
+
+# Editor and OS noise.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local overrides that must never be published.
+.env
+.env.*
+*.local

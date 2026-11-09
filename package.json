@@ -1,0 +1,52 @@
+{
+  "name": "dsh-omni",
+  "version": "0.1.0",
+  "description": "One plugin for every modality: probe, transcribe, analyse and compose image, video and audio.",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "scripts",
+    "skills",
+    "locale",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "multimodal",
+    "video",
+    "audio",
+    "image",
+    "ffmpeg",
+    "transcribe",
+    "whisper",
+    "storyboard"
+  ],
+  "license": "MIT",
+  "author": "ZTR66",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  }
+}

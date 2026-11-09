@@ -1,0 +1,19 @@
+# dsh-omni bundle patch.
+#
+# The shipped config is intentionally empty: provider lists and credential
+# references belong to the person running the plugin, not to the repository.
+# Fill them in through 设置 → 全模态, which writes this file for you.
+- insert:
+    - id: omni
+      name: 'dsh-omni'
+      config:
+        ffmpegPath: ''
+        pythonPath: ''
+        asr:
+          # auto → the Host's recogniser when one is registered, otherwise local
+          mode: auto
+          localModel: small
+        image:
+          providers: []
+        video:
+          providers: []
