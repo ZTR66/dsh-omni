@@ -86,6 +86,27 @@ The plugin is small; the tools are not self-contained. `omni_env_check` reports 
 
 Generation needs a provider and a key, configured in **设置 → 全模态**. Nothing about generation works without one, and the key is stored in the Host credential store rather than this plugin's config.
 
+## Image-to-video
+
+`video_generate` accepts `firstFrame`, `lastFrame` or `images`. The adapter picks
+the mode from what you supply, because the three modes have disjoint field sets and
+a stray field is a rejected request:
+
+| Supplied | Agnes mode | Effect |
+|---|---|---|
+| nothing | `text` | text-to-video |
+| `firstFrame` / `lastFrame` | `keyframe` | the frames anchor the shot's start and end |
+| `images` | `reference` | assets inform content and style, not exact framing |
+
+**The image must be a public URL.** The provider fetches it from its own network
+while the task runs, so a local path, a `file://` URI, `localhost` or a private
+address will never resolve for their crawler — and the failure surfaces as a
+generic task error naming neither the URL nor the reason. The plugin checks the
+shape of the URL before spending a request and says which of those it is.
+
+A signed URL that expires before the queue drains fails the same way; keep the
+link alive until the task completes.
+
 ## Provider adapters
 
 **Image** — OpenAI Images, GPT-Image, Gemini, SiliconFlow, Volcengine Ark, Zhipu CogView, DashScope Wanx, Mona Studio, plus local A1111/ComfyUI/SwarmUI. Fields differ per provider (size, quality, response shape); the differences live in descriptors, so the caller sees one shape.

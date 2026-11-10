@@ -72,12 +72,38 @@ export function apply(ctx, config = {}) {
 
   log('apply');
 
+  // A live view of the plugin config.
+  //
+  // `config` is the object the loader handed to `apply` and is frozen at that
+  // moment. Anything saved later through the settings page — a provider list, a
+  // credential reference, the image host — lands in the loader's entry instead,
+  // so reading `config` directly would keep serving the startup values forever.
+  // The getter closes over `config` as a fallback and prefers the current entry,
+  // which makes a save visible to the next tool call without a restart.
+  const currentConfig = () => {
+    try {
+      const editor = ctx.get?.('configEditor');
+      if (editor && typeof editor.entries === 'function') {
+        const entry = editor.entries().find((item) => item?.id === 'omni' || item?.options?.id === 'omni');
+        if (entry !== undefined && typeof editor.configuration === 'function') {
+          const row = editor.configuration().find((item) => item?.entry === entry || item?.entry?.id === entry.id);
+          const merged = { ...(row?.inherited ?? {}), ...(row?.override ?? {}) };
+          if (Object.keys(merged).length > 0) return merged;
+        }
+        if (entry?.config !== undefined) return entry.config;
+      }
+    }
+    catch { /* fall through to the startup config */ }
+    return config ?? {};
+  };
+
   const settings = {
-    ffmpegPath: typeof config?.ffmpegPath === 'string' ? config.ffmpegPath : '',
-    pythonPath: typeof config?.pythonPath === 'string' ? config.pythonPath : '',
-    asr: config?.asr ?? {},
-    image: config?.image ?? {},
-    video: config?.video ?? {},
+    get ffmpegPath() { return typeof currentConfig().ffmpegPath === 'string' ? currentConfig().ffmpegPath : ''; },
+    get pythonPath() { return typeof currentConfig().pythonPath === 'string' ? currentConfig().pythonPath : ''; },
+    get asr() { return currentConfig().asr ?? {}; },
+    get image() { return currentConfig().image ?? {}; },
+    get video() { return currentConfig().video ?? {}; },
+    get imageHost() { return currentConfig().imageHost; },
   };
 
   // Every tool registration is collected so `apply` can return one disposer.
@@ -427,8 +453,22 @@ export function apply(ctx, config = {}) {
       userWords: { type: 'string', description: 'userRequested 时附上用户原话，作为依据。' },
       providerId: { type: 'string', description: '指定服务商。' },
       model: { type: 'string', description: '指定模型。' },
-      size: { type: 'string', description: '分辨率，如 1920x1080。' },
+      size: { type: 'string', description: '分辨率，如 1920x1080（Agnes 用档位：720P / 1080P / 1K / 2K）。' },
       fps: { type: 'number', description: '帧率，默认 30。' },
+      firstFrame: {
+        type: 'string',
+        description: '首帧图片的**公网 URL**。给了就走图生视频（Agnes keyframe 模式 / 智谱 image2video）。'
+          + '提供商在它自己的网络里抓这张图，所以本地路径和 localhost 都不行。',
+      },
+      lastFrame: {
+        type: 'string',
+        description: '尾帧图片的公网 URL，可单独用也可和 firstFrame 一起用。',
+      },
+      images: {
+        type: 'array',
+        items: { type: 'string' },
+        description: '参考图片 URL 列表（Agnes reference 模式，最多 8 张）。和 firstFrame 互斥。',
+      },
       outDir: { type: 'string', description: '输出目录。' },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },

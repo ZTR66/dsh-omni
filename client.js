@@ -295,6 +295,7 @@ window.__ModuleLoader__.load({
               image: { providers: state.image.providers },
               video: { providers: state.video.providers },
               asr: state.asr,
+              imageHost: state.imageHost,
               ffmpegPath: state.ffmpegPath,
               pythonPath: state.pythonPath,
             }),
@@ -430,6 +431,74 @@ window.__ModuleLoader__.load({
                 h('option', { value: 'base' }, 'base（74MB）'),
                 h('option', { value: 'small' }, 'small（244MB，推荐）'),
                 h('option', { value: 'medium' }, 'medium（769MB，慢）'))))),
+
+        h('section', { style: S.section },
+          h('h3', { style: S.heading }, '图片图床（视频生成用）'),
+          h('p', { style: S.hint },
+            '视频生成要图片时，提供商在它自己的服务器上抓图，本地文件取不到。'
+            + '配一个图床，插件会自动把本地图片上传成公网链接。'),
+          state.imageHost?.configured === true
+            ? h('span', { style: S.badgeOk }, '图床已配置 · ' + (state.imageHost.bucket ?? ''))
+            : h('span', { style: S.badgeBad }, '未配置'),
+          h('div', { style: S.row },
+            h('label', { style: S.field },
+              h('span', { style: S.label }, '类型'),
+              h('select', {
+                value: state.imageHost?.kind ?? '',
+                onChange: (e) => setState({
+                  ...state,
+                  imageHost: { ...(state.imageHost ?? {}), kind: e.target.value },
+                }),
+                style: S.input,
+              },
+                h('option', { value: '' }, '不配置'),
+                h('option', { value: 'qiniu' }, '七牛云 Kodo'))),
+            h('label', { style: S.field },
+              h('span', { style: S.label }, '区域'),
+              h('select', {
+                value: state.imageHost?.region ?? 'z0',
+                onChange: (e) => setState({
+                  ...state,
+                  imageHost: { ...(state.imageHost ?? {}), region: e.target.value },
+                }),
+                style: S.input,
+              },
+                h('option', { value: 'z0' }, '华东 z0'),
+                h('option', { value: 'z1' }, '华北 z1'),
+                h('option', { value: 'z2' }, '华南 z2'),
+                h('option', { value: 'na0' }, '北美 na0'),
+                h('option', { value: 'as0' }, '东南亚 as0')))),
+          state.imageHost?.kind
+            ? h('div', null,
+              h(Field, {
+                label: 'AccessKey',
+                value: state.imageHost.accessKey ?? '',
+                onChange: (v) => setState({ ...state, imageHost: { ...state.imageHost, accessKey: v } }),
+                placeholder: '七牛控制台 → 密钥管理',
+                mono: true,
+              }),
+              h(Field, {
+                label: 'SecretKey（留空表示不修改）',
+                value: state.imageHost.secretKey ?? '',
+                onChange: (v) => setState({ ...state, imageHost: { ...state.imageHost, secretKey: v } }),
+                placeholder: state.imageHost.hasSecretKey ? '已保存，留空不修改' : '七牛控制台 → 密钥管理',
+                mono: true,
+              }),
+              h(Field, {
+                label: '存储空间名（bucket）',
+                value: state.imageHost.bucket ?? '',
+                onChange: (v) => setState({ ...state, imageHost: { ...state.imageHost, bucket: v } }),
+                placeholder: 'omni-images',
+                mono: true,
+              }),
+              h(Field, {
+                label: '访问域名',
+                value: state.imageHost.domain ?? '',
+                onChange: (v) => setState({ ...state, imageHost: { ...state.imageHost, domain: v } }),
+                placeholder: 'https://cdn.example.com',
+                mono: true,
+              }))
+            : null),
 
         h('section', { style: S.section },
           h('h3', { style: S.heading }, '高级'),
