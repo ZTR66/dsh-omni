@@ -127,7 +127,11 @@ export function apply(ctx, config = {}) {
     description: [
       'Check what this machine can do with media, and what is missing.',
       '',
-      'Run it before promising anything that touches a video, an audio file or image generation.',
+      'This reports capability, not direction — it does not say what to make. When the task is to produce a',
+      'video (as opposed to handling a file the user already has), call the design library\'s `video_guide`',
+      'first: it carries the production protocol and the choice of style, structure and shots. Checking the',
+      'environment before the plan exists lets the machine decide the content.',
+      '',
       'It reports, per stage: ffmpeg/ffprobe, the Python libraries for analysis and speech, downloaded',
       'Whisper models, whether the voice engine lives in a different interpreter, and which local',
       'generation services are listening. Each gap names its install command.',
