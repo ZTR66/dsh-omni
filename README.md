@@ -107,6 +107,33 @@ shape of the URL before spending a request and says which of those it is.
 A signed URL that expires before the queue drains fails the same way; keep the
 link alive until the task completes.
 
+### Getting a local file onto a public URL
+
+Since the provider fetches the image itself, a file on your disk needs a host
+first. Configure one under **Settings → 图片图床** and the plugin uploads local
+paths automatically — you pass the path, it returns the URL, and the request
+proceeds.
+
+| Field | What it is |
+|---|---|
+| Host | 七牛云 Kodo. Choose 不配置 to disable and pass URLs yourself |
+| Region | 华东 z0 / 华北 z1 / 华南 z2 / 北美 na0 / 东南亚 as0 |
+| AccessKey / SecretKey | Qiniu credentials, from the Qiniu console's key page |
+| Bucket | The bucket name, which must already exist |
+| Domain | The bucket's bound domain, e.g. `abc123.hd-bkt.clouddn.com` |
+
+Two things catch people out:
+
+- **A trial domain serves plain HTTP only.** Its certificate is issued for the
+  CDN's own hostnames, so an `https` request fails TLS before it reaches the
+  file. The upload probes once and returns the scheme that actually loads, which
+  is why a working link may read `http://`.
+- **The secret key field is write-only.** It is masked in the UI; leaving it
+  blank when saving keeps the stored value rather than clearing it.
+
+Qiniu trial domains expire after 30 days and are rate-limited. For anything
+long-lived, bind your own domain to the bucket.
+
 ## Provider adapters
 
 **Image** — OpenAI Images, GPT-Image, Gemini, SiliconFlow, Volcengine Ark, Zhipu CogView, DashScope Wanx, Mona Studio, plus local A1111/ComfyUI/SwarmUI. Fields differ per provider (size, quality, response shape); the differences live in descriptors, so the caller sees one shape.

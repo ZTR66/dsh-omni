@@ -1,6 +1,6 @@
 {
   "name": "@ztr66/dsh-omni",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "One plugin for every modality: probe, transcribe, analyse and compose image, video and audio.",
   "type": "module",
   "main": "index.js",
