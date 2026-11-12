@@ -127,10 +127,9 @@ export function apply(ctx, config = {}) {
     description: [
       'Check what this machine can do with media, and what is missing.',
       '',
-      'This reports capability, not direction — it does not say what to make. When the task is to produce a',
-      'video (as opposed to handling a file the user already has), call the design library\'s `video_guide`',
-      'first: it carries the production protocol and the choice of style, structure and shots. Checking the',
-      'environment before the plan exists lets the machine decide the content.',
+      'This reports capability, not direction — it does not say what to make. Run it once you know what',
+      'you are building, not before: a machine that checks its tools first ends up letting the tools decide',
+      'the content, which is backwards.',
       '',
       'It reports, per stage: ffmpeg/ffprobe, the Python libraries for analysis and speech, downloaded',
       'Whisper models, whether the voice engine lives in a different interpreter, and which local',
@@ -144,7 +143,10 @@ export function apply(ctx, config = {}) {
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute() {
       const report = await checkEnvironment(settings);
-      return formatEnvironment(report);
+      // A capability report is not a plan; say so where the model reads it.
+      return '> **这是能力报告，不是方案。** 它说明这台机器能做什么，不说明要做什么。\n'
+        + '> 等你清楚要做什么了，再来查环境才有意义。\n\n'
+        + formatEnvironment(report);
     },
   });
 
