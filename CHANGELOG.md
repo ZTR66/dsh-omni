@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.1.10
+
+Fixes a crash that hit every video whose duration was not a whole number of
+seconds — which is almost all of them.
+
+**`timeoutMs` was fractional.** The grid renderer sized its timeout from the
+clip length:
+
+```js
+Math.max(120000, span * 2000)
+```
+
+`span` is seconds and rarely an integer, so a 104.533 s film produced
+`209066.666`. Node's `execFile` requires an unsigned integer for `timeout` and
+throws immediately when given a float. `Math.ceil` is the whole fix.
+
+The same expression appeared in `compose.js` (`totalSeconds * 4000`), where it
+had not been triggered yet.
+
+**The error was invisible.** `ffmpeg()` collected `stderr` and `stdout` into its
+log, but a rejected argument arrives as a bare `Error` with neither field
+populated — the message lives on `error.message`, which was dropped. So the
+report read `ffmpeg failed to build the grid` with an empty detail, naming
+neither the cause nor the call. The message is now folded into the log, which
+means this whole class of failure becomes readable instead of silent.
+
+**How it surfaced.** A 104.5 s promo failed to produce a contact sheet; the same
+ffmpeg invocation run by hand succeeded, because a shell passes the filter string
+through and never assembles the timeout the plugin does. The difference was one
+argument the plugin builds and a test harness does not.
+
 ## 0.1.9
 
 Documents the image host. The README explained that a provider fetches the
