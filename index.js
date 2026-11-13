@@ -27,6 +27,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { normaliseFileArg, normaliseFileListArg } from './lib/args.js';
 import { checkEnvironment, formatEnvironment } from './lib/env.js';
 import { probe, formatProbe } from './lib/ffmpeg.js';
 import { renderGrid, formatGrid } from './lib/scan.js';
@@ -160,10 +161,13 @@ export function apply(ctx, config = {}) {
       'it is. It reads the file rather than trusting its extension.',
     ].join('\n'),
     parameters: {
-      input: { type: 'string', required: true, description: 'Path to a media file.' },
+      input: { type: 'string', required: true, description: 'Path to a media file. Pass it as `input`.' },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await probe(settings, args?.input);
       return formatProbe(result);
     },
@@ -190,7 +194,7 @@ export function apply(ctx, config = {}) {
       'Timestamps are burned into each cell when a font is available, so the grid is readable on its own.',
     ].join('\n'),
     parameters: {
-      input: { type: 'string', required: true, description: 'Path to a video file.' },
+      input: { type: 'string', required: true, description: 'Path to a video file. Pass it as `input`.' },
       from: { type: 'number', description: 'Start second. Defaults to 0.' },
       to: { type: 'number', description: 'End second. Defaults to the end of the file.' },
       fps: { type: 'number', description: 'Frames per second to sample. 0.5 coarse, 2 default-ish, 10 fine. Ignored when `grid` is given.' },
@@ -202,6 +206,9 @@ export function apply(ctx, config = {}) {
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await renderGrid(settings, args ?? {});
       return formatGrid(result);
     },
@@ -220,13 +227,16 @@ export function apply(ctx, config = {}) {
       'so the picture is the one that is actually there. Up to 24 moments per call.',
     ].join('\n'),
     parameters: {
-      input: { type: 'string', required: true, description: 'Path to a video file.' },
+      input: { type: 'string', required: true, description: 'Path to a video file. Pass it as `input`.' },
       at: { type: 'number', description: 'One second offset. Use an array via `at` for several.' },
       width: { type: 'number', description: 'Output width. Defaults to the source width.' },
       outDir: { type: 'string', description: 'Directory for the PNGs.' },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await extractFrames(settings, args ?? {});
       return formatFrames(result);
     },
@@ -252,10 +262,13 @@ export function apply(ctx, config = {}) {
       'It also does not transcribe; use audio_transcribe for words.',
     ].join('\n'),
     parameters: {
-      input: { type: 'string', required: true, description: 'Path to an audio file (or a video with an audio track).' },
+      input: { type: 'string', required: true, description: 'Path to an audio file (or a video with an audio track). Pass it as `input`.' },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await analyseAudio(settings, args ?? {});
       return formatAnalysis(result);
     },
@@ -278,12 +291,15 @@ export function apply(ctx, config = {}) {
       '2:15" and be understood.',
     ].join('\n'),
     parameters: {
-      input: { type: 'string', required: true, description: 'Path to an audio file or a video with audio.' },
+      input: { type: 'string', required: true, description: 'Path to an audio file or a video with audio. Pass it as `input`.' },
       language: { type: 'string', description: 'BCP-47-ish language code such as zh or en. Defaults to zh; use auto to detect.' },
       model: { type: 'string', description: 'Local model size when the local route runs: tiny, base, small, medium. Defaults to the configured value.' },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await transcribeAudio(ctx, settings, args ?? {});
       return formatTranscript(result);
     },
@@ -308,6 +324,9 @@ export function apply(ctx, config = {}) {
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await speakAudio(settings, args ?? {});
       return formatSpeech(result);
     },
@@ -332,6 +351,9 @@ export function apply(ctx, config = {}) {
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await cutAudio(settings, args ?? {});
       return formatCut(result);
     },
@@ -367,6 +389,9 @@ export function apply(ctx, config = {}) {
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await composeVideo(settings, args ?? {});
       return formatCompose(result);
     },
@@ -381,12 +406,15 @@ export function apply(ctx, config = {}) {
       'analyser both want an audio file. Do not try to transcribe an MP4 directly.',
     ].join('\n'),
     parameters: {
-      input: { type: 'string', required: true, description: 'Path to a video file.' },
+      input: { type: 'string', required: true, description: 'Path to a video file. Pass it as `input`.' },
       sampleRate: { type: 'number', description: 'Force an output sample rate. Omit to keep the source rate.' },
       outDir: { type: 'string', description: 'Directory for the MP3.' },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await extractAudio(settings, args ?? {});
       return formatExtractAudio(result);
     },
@@ -417,6 +445,9 @@ export function apply(ctx, config = {}) {
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const result = await generateImage(ctx, {
         ...(args ?? {}),
         providers: Array.isArray(settings.image?.providers) ? settings.image.providers : [],
@@ -479,6 +510,9 @@ export function apply(ctx, config = {}) {
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
     async execute(args, exec) {
+      // Accept file_path / path / file as aliases for `input`; a model that
+      // reads "Path to a video file" rarely guesses the key name.
+      args = normaliseFileArg(args);
       const scenes = Array.isArray(args?.scenes) && args.scenes.length > 0
         ? args.scenes
         : [{ description: String(args?.prompt ?? ''), why: undefined }];

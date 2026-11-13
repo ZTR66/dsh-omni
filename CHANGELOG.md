@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.1.11
+
+Two bugs that made working tools look broken, and a third that was a real
+inconsistency between two tools that claim the same capability.
+
+**Every media tool rejected the obvious argument name.** The schema names the
+primary argument `input` and the description reads "Path to a video file" — the
+description names the value, not the key. A model reading it writes `file_path`,
+`path` or `file`, and gets back `input is required`, which reads as broken
+tooling.
+
+One recorded session did exactly that. It called `video_scan` with `file_path`
+twice, `audio_analyze` and `audio_transcribe` with `path`, then concluded "the
+media tools have a parameter defect in this environment" and spent the rest of
+its budget reimplementing frame extraction with ffmpeg and librosa by hand.
+Along the way it hit a numpy error the shipped `analyze.py` already handles —
+which is the argument for using the tool.
+
+`lib/args.js` now accepts `input`, `file_path`, `filepath`, `path`, `file`,
+`source`, `video` and `audio`, with `input` winning when present. Descriptions
+say `Pass it as input` as well, so the correct name is legible.
+
+**`audio_analyze` could not read a video.** Its description says "or a video
+with an audio track", but the path went straight to librosa, which answers
+`Format not recognised`. `audio_transcribe` had decoded with `-vn` first; this
+path had not. It now decodes video input to 16 kHz mono WAV before analysis and
+removes the intermediate in a `finally`.
+
+Verified end to end: `video_scan` with `file_path` returns a 20-cell grid, and
+`audio_analyze` with `path` pointed at an .mp4 returns BPM 129.2, C minor and a
+full loudness/timbre report — agreeing with the numbers the session had computed
+by hand.
+
 ## 0.1.10
 
 Fixes a crash that hit every video whose duration was not a whole number of
